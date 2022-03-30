@@ -734,15 +734,6 @@ namespace UnityEngine.Networking
                     lastMessageTime = Time.time;
 
 #if UNITY_EDITOR
-                    Profiler.IncrementStatIncoming(MsgType.HLAPIMsg);
-
-                    if (msgType > MsgType.Highest)
-                    {
-                        Profiler.IncrementStatIncoming(MsgType.UserMessage, msgType + ":" + msgType.GetType().Name);
-                    }
-#endif
-
-#if UNITY_EDITOR
                     if (m_PacketStats.ContainsKey(msgType))
                     {
                         PacketStat stat = m_PacketStats[msgType];

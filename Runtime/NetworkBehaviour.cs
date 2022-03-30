@@ -193,10 +193,6 @@ namespace UnityEngine.Networking
 
             writer.FinishMessage();
             ClientScene.readyConnection.SendWriter(writer, channelId);
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.Command, cmdName);
-#endif
         }
 
         /// <summary>
@@ -229,10 +225,6 @@ namespace UnityEngine.Networking
 
             writer.FinishMessage();
             NetworkServer.SendWriterToReady(gameObject, writer, channelId);
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.Rpc, rpcName);
-#endif
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -248,10 +240,6 @@ namespace UnityEngine.Networking
             writer.FinishMessage();
 
             conn.SendWriter(writer, channelId);
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.Rpc, rpcName);
-#endif
         }
 
         /// <summary>
@@ -283,10 +271,6 @@ namespace UnityEngine.Networking
 
             writer.FinishMessage();
             NetworkServer.SendWriterToReady(gameObject, writer, channelId);
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.SyncEvent, eventName);
-#endif
         }
 
         /// <summary>

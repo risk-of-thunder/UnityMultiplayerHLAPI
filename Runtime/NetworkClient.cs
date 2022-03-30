@@ -745,9 +745,6 @@ namespace UnityEngine.Networking
                     if (LogFilter.logError) { Debug.LogError("NetworkClient Send when not connected to a server"); }
                     return false;
                 }
-#if UNITY_EDITOR
-                Profiler.IncrementStatOutgoing(MsgType.UserMessage, msgType + ":" + msg.GetType().Name);
-#endif
                 return m_Connection.Send(msgType, msg);
             }
             if (LogFilter.logError) { Debug.LogError("NetworkClient Send with no connection"); }
@@ -835,9 +832,6 @@ namespace UnityEngine.Networking
                     if (LogFilter.logError) { Debug.LogError("NetworkClient SendUnreliable when not connected to a server"); }
                     return false;
                 }
-#if UNITY_EDITOR
-                Profiler.IncrementStatOutgoing(MsgType.UserMessage, msgType + ":" + msg.GetType().Name);
-#endif
                 return m_Connection.SendUnreliable(msgType, msg);
             }
             if (LogFilter.logError) { Debug.LogError("NetworkClient SendUnreliable with no connection"); }
@@ -854,9 +848,6 @@ namespace UnityEngine.Networking
         /// <returns>True if the message was sent.</returns>
         public bool SendByChannel(short msgType, MessageBase msg, int channelId)
         {
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.UserMessage, msgType + ":" + msg.GetType().Name);
-#endif
             if (m_Connection != null)
             {
                 if (m_AsyncConnect != ConnectState.Connected)
@@ -982,10 +973,6 @@ namespace UnityEngine.Networking
                             GenerateDataError(error);
                             return;
                         }
-
-#if UNITY_EDITOR
-                        Profiler.IncrementStatIncoming(MsgType.LLAPIMsg);
-#endif
 
                         m_MsgReader.SeekZero();
                         m_Connection.TransportReceive(m_MsgBuffer, receivedSize, channelId);
@@ -1282,9 +1269,6 @@ namespace UnityEngine.Networking
             s_Clients = new List<NetworkClient>();
             s_IsActive = false;
             ClientScene.Shutdown();
-#if UNITY_EDITOR
-            Profiler.ResetAll();
-#endif
         }
 
         internal static void SetActive(bool state)

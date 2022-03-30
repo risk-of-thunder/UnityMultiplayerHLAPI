@@ -662,10 +662,6 @@ namespace UnityEngine.Networking
             }
 
             invokeFunction(invokeComponent, reader);
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatIncoming(MsgType.SyncEvent, NetworkBehaviour.GetCmdHashEventName(cmdHash));
-#endif
         }
 
         // happens on client
@@ -703,10 +699,6 @@ namespace UnityEngine.Networking
             }
 
             invokeFunction(invokeComponent, reader);
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatIncoming(MsgType.SyncList, NetworkBehaviour.GetCmdHashListName(cmdHash));
-#endif
         }
 
         // happens on server
@@ -744,10 +736,6 @@ namespace UnityEngine.Networking
             }
 
             invokeFunction(invokeComponent, reader);
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatIncoming(MsgType.Command, NetworkBehaviour.GetCmdHashCmdName(cmdHash));
-#endif
         }
 
         // happens on client
@@ -785,10 +773,6 @@ namespace UnityEngine.Networking
             }
 
             invokeFunction(invokeComponent, reader);
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatIncoming(MsgType.Rpc, NetworkBehaviour.GetCmdHashRpcName(cmdHash));
-#endif
         }
 
         // invoked by unity runtime immediately after the regular "Update()" function.
@@ -826,10 +810,6 @@ namespace UnityEngine.Networking
                         if (comp.OnSerialize(s_UpdateWriter, false))
                         {
                             comp.ClearAllDirtyBits();
-
-#if UNITY_EDITOR
-                            Profiler.IncrementStatOutgoing(MsgType.UpdateVars, comp.GetType().Name);
-#endif
 
                             wroteData = true;
                         }
@@ -881,12 +861,6 @@ namespace UnityEngine.Networking
                 var oldReadPos = reader.Position;
 #endif
                 comp.OnDeserialize(reader, initialState);
-#if UNITY_EDITOR
-                if (reader.Position - oldReadPos > 1)
-                {
-                    Profiler.IncrementStatIncoming(MsgType.UpdateVars, comp.GetType().Name);
-                }
-#endif
             }
         }
 
@@ -1244,10 +1218,6 @@ namespace UnityEngine.Networking
             NetworkServer.Update();
             NetworkClient.UpdateClients();
             NetworkManager.UpdateScene();
-
-#if UNITY_EDITOR
-            Profiler.NewProfilerTick();
-#endif
         }
     };
 }

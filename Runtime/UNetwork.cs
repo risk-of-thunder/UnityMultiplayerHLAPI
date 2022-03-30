@@ -379,51 +379,5 @@ namespace UnityEngine.Networking
         MaxPacketSize = 3
             // maybe add an InitialCapacity for Pending Buffers list if needed in the future
     }
-
-#if UNITY_EDITOR
-    class Profiler
-    {
-        internal static void IncrementStatOutgoing(short msgType)
-        {
-            IncrementStatOutgoing(msgType, "msg");
-        }
-
-        internal static void IncrementStatOutgoing(short msgType, string name)
-        {
-            UnityEditor.NetworkDetailStats.IncrementStat(
-                UnityEditor.NetworkDetailStats.NetworkDirection.Outgoing,
-                msgType, name, 1);
-        }
-
-        internal static void IncrementStatIncoming(short msgType)
-        {
-            IncrementStatIncoming(msgType, "msg");
-        }
-
-        internal static void IncrementStatIncoming(short msgType, string name)
-        {
-            UnityEditor.NetworkDetailStats.IncrementStat(
-                UnityEditor.NetworkDetailStats.NetworkDirection.Incoming,
-                msgType, name, 1);
-        }
-
-        internal static void SetStatOutgoing(short msgType, int value)
-        {
-            UnityEditor.NetworkDetailStats.SetStat(
-                UnityEditor.NetworkDetailStats.NetworkDirection.Outgoing,
-                msgType, "msg", value);
-        }
-
-        internal static void ResetAll()
-        {
-            UnityEditor.NetworkDetailStats.ResetAll();
-        }
-
-        internal static void NewProfilerTick()
-        {
-            UnityEditor.NetworkDetailStats.NewProfilerTick(Time.time);
-        }
-    }
-#endif
 }
 #pragma warning disable 618

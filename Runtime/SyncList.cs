@@ -470,10 +470,6 @@ namespace UnityEngine.Networking
 
             NetworkServer.SendWriterToReady(uv.gameObject, writer, m_Behaviour.GetNetworkChannel());
 
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.SyncList, op.ToString());
-#endif
-
             // ensure it is invoked on host
             if (m_Behaviour.isServer && m_Behaviour.isClient && m_Callback != null)
             {

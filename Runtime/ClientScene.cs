@@ -793,10 +793,6 @@ namespace UnityEngine.Networking
             }
             if (LogFilter.logDebug) { Debug.Log("Client spawn handler instantiating [netId:" + s_ObjectSpawnMessage.netId + " asset ID:" + s_ObjectSpawnMessage.assetId + " pos:" + s_ObjectSpawnMessage.position + "]"); }
 
-#if UNITY_EDITOR
-            Profiler.IncrementStatIncoming(MsgType.ObjectSpawn, GetStringForAssetId(s_ObjectSpawnMessage.assetId));
-#endif
-
             NetworkIdentity localNetworkIdentity;
             if (s_NetworkScene.GetNetworkIdentity(s_ObjectSpawnMessage.netId, out localNetworkIdentity))
             {
@@ -855,11 +851,6 @@ namespace UnityEngine.Networking
 
             if (LogFilter.logDebug) { Debug.Log("Client spawn scene handler instantiating [netId:" + s_ObjectSpawnSceneMessage.netId + " sceneId:" + s_ObjectSpawnSceneMessage.sceneId + " pos:" + s_ObjectSpawnSceneMessage.position); }
 
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatIncoming(MsgType.ObjectSpawnScene, "sceneId");
-#endif
-
             NetworkIdentity localNetworkIdentity;
             if (s_NetworkScene.GetNetworkIdentity(s_ObjectSpawnSceneMessage.netId, out localNetworkIdentity))
             {
@@ -910,9 +901,6 @@ namespace UnityEngine.Networking
             NetworkIdentity localObject;
             if (s_NetworkScene.GetNetworkIdentity(s_ObjectDestroyMessage.netId, out localObject))
             {
-#if UNITY_EDITOR
-                Profiler.IncrementStatIncoming(MsgType.ObjectDestroy, GetStringForAssetId(localObject.assetId));
-#endif
                 localObject.OnNetworkDestroy();
 
                 if (!NetworkScene.InvokeUnSpawnHandler(localObject.assetId, localObject.gameObject))
@@ -1033,10 +1021,6 @@ namespace UnityEngine.Networking
             {
                 if (LogFilter.logWarn) { Debug.LogWarning("Did not find target for SyncEvent message for " + netId); }
             }
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.SyncEvent, NetworkBehaviour.GetCmdHashHandlerName(cmdHash));
-#endif
         }
 
         static void OnSyncListMessage(NetworkMessage netMsg)
@@ -1055,10 +1039,6 @@ namespace UnityEngine.Networking
             {
                 if (LogFilter.logWarn) { Debug.LogWarning("Did not find target for SyncList message for " + netId); }
             }
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.SyncList, NetworkBehaviour.GetCmdHashHandlerName(cmdHash));
-#endif
         }
 
         static void OnClientAuthority(NetworkMessage netMsg)

@@ -219,9 +219,6 @@ namespace UnityEngine.Networking
         /// </summary>
         public static void Reset()
         {
-#if UNITY_EDITOR
-            Profiler.ResetAll();
-#endif
             NetworkManager.activeTransport.Shutdown();
             NetworkManager.activeTransport.Init();
 
@@ -1121,9 +1118,6 @@ namespace UnityEngine.Networking
 
         void OnData(NetworkConnection conn, int receivedSize, int channelId)
         {
-#if UNITY_EDITOR
-            Profiler.IncrementStatIncoming(MsgType.LLAPIMsg);
-#endif
             conn.TransportReceive(m_SimpleServerSimple.messageBuffer, receivedSize, channelId);
         }
 
@@ -1959,10 +1953,6 @@ namespace UnityEngine.Networking
                 {
                     SendToReady(uv.gameObject, MsgType.ObjectSpawn, msg);
                 }
-
-#if UNITY_EDITOR
-                Profiler.IncrementStatOutgoing(MsgType.ObjectSpawn, uv.assetId.ToString());
-#endif
             }
             else
             {
@@ -1987,10 +1977,6 @@ namespace UnityEngine.Networking
                 {
                     SendToReady(uv.gameObject, MsgType.ObjectSpawn, msg);
                 }
-
-#if UNITY_EDITOR
-                Profiler.IncrementStatOutgoing(MsgType.ObjectSpawnScene, "sceneId");
-#endif
             }
         }
 
@@ -2085,11 +2071,6 @@ namespace UnityEngine.Networking
             {
                 uv.clientAuthorityOwner.RemoveOwnedObject(uv);
             }
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.ObjectDestroy, uv.assetId.ToString());
-#endif
-
             ObjectDestroyMessage msg = new ObjectDestroyMessage();
             msg.netId = uv.netId;
             SendToObservers(uv.gameObject, MsgType.ObjectDestroy, msg);

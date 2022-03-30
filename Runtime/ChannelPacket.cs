@@ -58,10 +58,6 @@ namespace UnityEngine.Networking
                 if (m_IsReliable && error == (int)NetworkError.NoResources)
                 {
                     // this packet will be buffered by the containing ChannelBuffer, so this is not an error
-
-#if UNITY_EDITOR
-                    Profiler.IncrementStatOutgoing(MsgType.HLAPIResend);
-#endif
                     return false;
                 }
 

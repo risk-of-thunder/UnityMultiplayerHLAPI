@@ -1442,19 +1442,12 @@ namespace UnityEngine.Networking
 
             m_LocalTransformWriter.FinishMessage();
 
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.LocalPlayerTransform, "6:LocalPlayerTransform");
-#endif
             ClientScene.readyConnection.SendWriter(m_LocalTransformWriter, GetNetworkChannel());
         }
 
         static public void HandleTransform(NetworkMessage netMsg)
         {
             NetworkInstanceId netId = netMsg.reader.ReadNetworkId();
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatIncoming(MsgType.LocalPlayerTransform, "6:LocalPlayerTransform");
-#endif
 
             GameObject foundObj = NetworkServer.FindLocalObject(netId);
             if (foundObj == null)

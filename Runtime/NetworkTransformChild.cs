@@ -445,9 +445,6 @@ namespace UnityEngine.Networking
 
             m_LocalTransformWriter.FinishMessage();
 
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.LocalChildTransform, "16:LocalChildTransform");
-#endif
             ClientScene.readyConnection.SendWriter(m_LocalTransformWriter, GetNetworkChannel());
         }
 
@@ -455,10 +452,6 @@ namespace UnityEngine.Networking
         {
             NetworkInstanceId netId = netMsg.reader.ReadNetworkId();
             uint childIndex = netMsg.reader.ReadPackedUInt32();
-
-#if UNITY_EDITOR
-            Profiler.IncrementStatIncoming(MsgType.LocalChildTransform, "16:LocalChildTransform");
-#endif
 
             GameObject foundObj = NetworkServer.FindLocalObject(netId);
             if (foundObj == null)

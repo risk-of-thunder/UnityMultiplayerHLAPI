@@ -251,9 +251,6 @@ namespace UnityEngine.Networking
 
         internal bool SendBytes(byte[] bytes, int bytesToSend)
         {
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.HLAPIMsg);
-#endif
             if (bytesToSend >= UInt16.MaxValue)
             {
                 if (LogFilter.logError) { Debug.LogError("ChannelBuffer:SendBytes cannot send packet larger than " + UInt16.MaxValue + " bytes"); }
@@ -340,9 +337,6 @@ namespace UnityEngine.Networking
 
         ChannelPacket AllocPacket()
         {
-#if UNITY_EDITOR
-            Profiler.SetStatOutgoing(MsgType.HLAPIPending, pendingPacketCount);
-#endif
             if (s_FreePackets.Count == 0)
             {
                 return new ChannelPacket(m_MaxPacketSize, m_IsReliable);
@@ -357,9 +351,6 @@ namespace UnityEngine.Networking
 
         static void FreePacket(ChannelPacket packet)
         {
-#if UNITY_EDITOR
-            Profiler.SetStatOutgoing(MsgType.HLAPIPending, pendingPacketCount);
-#endif
             if (s_FreePackets.Count >= k_MaxFreePacketCount)
             {
                 // just discard this packet, already tracking too many free packets
@@ -370,9 +361,6 @@ namespace UnityEngine.Networking
 
         public bool SendInternalBuffer()
         {
-#if UNITY_EDITOR
-            Profiler.IncrementStatOutgoing(MsgType.LLAPIMsg);
-#endif
             if (m_IsReliable && m_PendingPackets.Count > 0)
             {
                 // send until transport can take no more
