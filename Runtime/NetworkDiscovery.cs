@@ -63,7 +63,7 @@ namespace UnityEngine.Networking
         int m_BroadcastInterval = 1000;
 
         [SerializeField]
-        bool m_UseNetworkManager = false;
+        bool m_UseNetworkManager;
 
         [SerializeField]
         string m_BroadcastData = "HELLO";
@@ -506,8 +506,7 @@ namespace UnityEngine.Networking
                         var value = m_BroadcastsReceived[addr];
                         if (GUI.Button(new Rect(xpos, ypos + 20, 200, 20), "Game at " + addr) && m_UseNetworkManager)
                         {
-                            string dataString = BytesToString(value.broadcastData);
-                            var items = dataString.Split(':');
+                            string[] items = BytesToString(value.broadcastData).Split(':');
                             if (items.Length == 3 && items[0] == "NetworkManager")
                             {
                                 if (NetworkManager.singleton != null && NetworkManager.singleton.client == null)

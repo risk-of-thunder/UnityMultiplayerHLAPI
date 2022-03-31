@@ -230,7 +230,7 @@ namespace UnityEngine.Networking
         /// <summary>
         /// The QoS channel to use to send this command on, see <see cref="QosType"/>QosType.
         /// </summary>
-        public int channel = Channels.DefaultReliable; // this is zero
+        public int channel;
     }
 
     /// <summary>
@@ -294,7 +294,7 @@ namespace UnityEngine.Networking
         /// <summary>
         /// The channel ID which this RPC transmission will use.
         /// </summary>
-        public int channel = Channels.DefaultReliable; // this is zero
+        public int channel;
     }
 
     /// <summary>

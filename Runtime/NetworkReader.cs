@@ -616,7 +616,7 @@ namespace UnityEngine.Networking
         /// <returns>The assetId object read from the stream.</returns>
         public NetworkHash128 ReadNetworkHash128()
         {
-            NetworkHash128 hash;
+            NetworkHash128 hash = default(NetworkHash128);
             hash.i0 = ReadByte();
             hash.i1 = ReadByte();
             hash.i2 = ReadByte();

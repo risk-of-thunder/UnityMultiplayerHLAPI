@@ -406,8 +406,7 @@ namespace UnityEngine.Networking
                 return null;
             }
 
-            Invoker inv = s_CmdHandlerDelegates[cmdHash];
-            return inv.DebugString();
+            return s_CmdHandlerDelegates[cmdHash].DebugString();
         }
 
         // wrapper fucntions for each type of network operation
@@ -590,15 +589,12 @@ namespace UnityEngine.Networking
             {
                 return cmdHash.ToString();
             }
-            Invoker inv = s_CmdHandlerDelegates[cmdHash];
-            var name = inv.invokeFunction.GetMethodName();
-
-            int index = name.IndexOf(prefix);
-            if (index > -1)
+            string text = s_CmdHandlerDelegates[cmdHash].invokeFunction.GetMethodName();
+            if(text.IndexOf(prefix) > -1)
             {
-                name = name.Substring(prefix.Length);
+                text = text.Substring(prefix.Length);
             }
-            return name;
+            return text;
         }
 
         internal static string GetCmdHashCmdName(int cmdHash)
@@ -659,7 +655,21 @@ namespace UnityEngine.Networking
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        protected void SetSyncVar<T>(T value, ref T fieldValue, uint dirtyBit)
+        protected void SetSyncVarEnum<T>(T newValue, ulong newValueAsUlong, ref T fieldValue, ulong fieldValueAsUlong, uint dirtyBit) where T : struct
+        {
+            if (!newValueAsUlong.Equals(fieldValueAsUlong))
+            {
+                if (LogFilter.logDev)
+                {
+                    Debug.Log(string.Concat("SetSyncVar ", GetType().Name, " bit [", dirtyBit, "] ", fieldValue, "->", newValue));
+                }
+                SetDirtyBit(dirtyBit);
+                fieldValue = newValue;
+            }
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected void SetSyncVar<T>(T value, ref T fieldValue, uint dirtyBit) where T : IEquatable<T>
         {
             bool changed = false;
             if (value == null)

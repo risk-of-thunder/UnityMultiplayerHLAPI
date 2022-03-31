@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace UnityEngine.Networking
 {
@@ -7,48 +8,56 @@ namespace UnityEngine.Networking
     /// </summary>
     // unrolled for your pleasure.
     [Serializable]
-    
-    public struct NetworkHash128
+    [StructLayout(LayoutKind.Explicit)]
+    public struct NetworkHash128 : IEquatable<NetworkHash128>
     {
         // struct cannot have embedded arrays..
+        [FieldOffset(0)]
         public byte i0;
+        [FieldOffset(1)]
         public byte i1;
+        [FieldOffset(2)]
         public byte i2;
+        [FieldOffset(3)]
         public byte i3;
+        [FieldOffset(4)]
         public byte i4;
+        [FieldOffset(5)]
         public byte i5;
+        [FieldOffset(6)]
         public byte i6;
+        [FieldOffset(7)]
         public byte i7;
+        [FieldOffset(8)]
         public byte i8;
+        [FieldOffset(9)]
         public byte i9;
+        [FieldOffset(10)]
         public byte i10;
+        [FieldOffset(11)]
         public byte i11;
+        [FieldOffset(12)]
         public byte i12;
+        [FieldOffset(13)]
         public byte i13;
+        [FieldOffset(14)]
         public byte i14;
+        [FieldOffset(15)]
         public byte i15;
+
+        [FieldOffset(0)]
+        private ulong i0_7;
+
+        [FieldOffset(8)]
+        private ulong i8_15;
 
         /// <summary>
         /// Resets the value of a NetworkHash to zero (invalid).
         /// </summary>
         public void Reset()
         {
-            i0 = 0;
-            i1 = 0;
-            i2 = 0;
-            i3 = 0;
-            i4 = 0;
-            i5 = 0;
-            i6 = 0;
-            i7 = 0;
-            i8 = 0;
-            i9 = 0;
-            i10 = 0;
-            i11 = 0;
-            i12 = 0;
-            i13 = 0;
-            i14 = 0;
-            i15 = 0;
+            i0_7 = 0ul;
+            i8_15 = 0ul;
         }
 
         /// <summary>
@@ -57,7 +66,7 @@ namespace UnityEngine.Networking
         /// <returns>True if the value is non-zero.</returns>
         public bool IsValid()
         {
-            return (i0 | i1 | i2 | i3 | i4 | i5 | i6 | i7 | i8 | i9 | i10 | i11 | i12 | i13 | i14 | i15) != 0;
+            return (i0_7 | i8_15) != 0;
         }
 
         static int HexToNumber(char c)
@@ -93,7 +102,7 @@ namespace UnityEngine.Networking
         /// <returns>A 128 bit network hash object.</returns>
         public static NetworkHash128 Parse(string text)
         {
-            NetworkHash128 hash;
+            NetworkHash128 hash = default(NetworkHash128);
 
             // add leading zeros if required
             int l = text.Length;
@@ -135,6 +144,29 @@ namespace UnityEngine.Networking
         {
             return String.Format("{0:x2}{1:x2}{2:x2}{3:x2}{4:x2}{5:x2}{6:x2}{7:x2}{8:x2}{9:x2}{10:x2}{11:x2}{12:x2}{13:x2}{14:x2}{15:x2}",
                 i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15);
+        }
+
+        public bool Equals(NetworkHash128 other)
+        {
+            if (i0_7 == other.i0_7)
+            {
+                return i8_15 == other.i8_15;
+            }
+            return false;
+        }
+
+        public override bool Equals(object other)
+        {
+            if (!(other is NetworkHash128 other2))
+            {
+                return false;
+            }
+            return Equals(other2);
+        }
+
+        public override int GetHashCode()
+        {
+            return i0_7.GetHashCode();
         }
     }
 }

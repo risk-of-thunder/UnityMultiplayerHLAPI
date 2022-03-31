@@ -977,9 +977,13 @@ namespace UnityEngine.Networking
             {
                 localObject.OnUpdateVars(netMsg.reader, false, netMsg);
             }
-            else
+            else if (LogFilter.logWarn)
             {
-                if (LogFilter.logWarn) { Debug.LogWarning("Did not find target for sync message for " + netId); }
+                int channelID = netMsg.channelId;
+                NetworkConnection conn = netMsg.conn;
+                short msgType = netMsg.msgType;
+                Debug.LogWarningFormat(string.Concat("Did not find target for sync message for ", netId, "(channelId = {0}, conn = {1}, msgType = {2}"), channelID, conn, msgType);
+                    ))
             }
         }
 

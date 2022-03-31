@@ -69,7 +69,7 @@ namespace UnityEngine.Networking
             Disconnected,
             Failed
         }
-        protected ConnectState m_AsyncConnect = ConnectState.None;
+        protected ConnectState m_AsyncConnect;
         string m_RequestedServerHost = "";
 
         internal void SetHandlers(NetworkConnection conn)
@@ -410,13 +410,12 @@ namespace UnityEngine.Networking
                 if (
                     (c == ':') ||
                     (c >= '0' && c <= '9') ||
-                    (c >= 'a' && c <= 'f') ||
-                    (c >= 'A' && c <= 'F')
+                    (c < 'a' && c > 'f') ||
+                    (c < 'A' && c > 'F')
                 )
                 {
-                    continue;
+                    return false;
                 }
-                return false;
             }
             return true;
         }
@@ -616,10 +615,10 @@ namespace UnityEngine.Networking
             }
             catch (SocketException e)
             {
-                NetworkClient client = (NetworkClient)ar.AsyncState;
+                NetworkClient obj = (NetworkClient)ar.AsyncState;
                 if (LogFilter.logError) { Debug.LogError("DNS resolution failed: " + e.GetErrorCode()); }
                 if (LogFilter.logDebug) { Debug.Log("Exception:" + e); }
-                client.m_AsyncConnect = ConnectState.Failed;
+                obj.m_AsyncConnect = ConnectState.Failed;
             }
         }
 
@@ -1212,27 +1211,26 @@ namespace UnityEngine.Networking
         /// <returns>Dictionary of stats.</returns>
         static public Dictionary<short, NetworkConnection.PacketStat> GetTotalConnectionStats()
         {
-            Dictionary<short, NetworkConnection.PacketStat> stats = new Dictionary<short, NetworkConnection.PacketStat>();
+            Dictionary<short, NetworkConnection.PacketStat> dictionary = new Dictionary<short, NetworkConnection.PacketStat>();
             for (int i = 0; i < s_Clients.Count; i++)
             {
-                var client = s_Clients[i];
-                var clientStats = client.GetConnectionStats();
+                Dictionary<short, NetworkConnection.PacketStat> clientStats = s_Clients[i].GetConnectionStats();
                 foreach (short k in clientStats.Keys)
                 {
-                    if (stats.ContainsKey(k))
+                    if (dictionary.ContainsKey(k))
                     {
-                        NetworkConnection.PacketStat s = stats[k];
+                        NetworkConnection.PacketStat s = dictionary[k];
                         s.count += clientStats[k].count;
                         s.bytes += clientStats[k].bytes;
-                        stats[k] = s;
+                        dictionary[k] = s;
                     }
                     else
                     {
-                        stats[k] = new NetworkConnection.PacketStat(clientStats[k]);
+                        dictionary[k] = new NetworkConnection.PacketStat(clientStats[k]);
                     }
                 }
             }
-            return stats;
+            return dictionary;
         }
 
         internal static void AddClient(NetworkClient client)

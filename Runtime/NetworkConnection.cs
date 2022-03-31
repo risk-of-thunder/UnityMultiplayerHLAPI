@@ -114,7 +114,7 @@ namespace UnityEngine.Networking
         /// <para>ConnectionSend con:1 bytes:11 msgId:5 FB59D743FD120000000000 ConnectionRecv con:1 bytes:27 msgId:8 14F21000000000016800AC3FE090C240437846403CDDC0BD3B0000</para>
         /// <para>Note that these are application-level network messages, not protocol-level packets. There will typically be multiple network messages combined in a single protocol packet.</para>
         /// </summary>
-        public bool logNetworkMessages = false;
+        public bool logNetworkMessages;
         /// <summary>
         /// True if the connection is connected to a remote end-point.
         /// <para>This applies to NetworkServer and NetworkClient connections. When not connected, the hostID will be -1. When connected, the hostID will be a positive integer.</para>
@@ -277,12 +277,20 @@ namespace UnityEngine.Networking
 
         static bool IsSequencedQoS(QosType qos)
         {
-            return (qos == QosType.ReliableSequenced || qos == QosType.UnreliableSequenced);
+            if(qos != QosType.ReliableSequenced)
+            {
+                return qos == QosType.UnreliableSequenced;
+            }
+            return true;
         }
 
         static bool IsReliableQoS(QosType qos)
         {
-            return (qos == QosType.Reliable || qos == QosType.ReliableFragmented || qos == QosType.ReliableSequenced || qos == QosType.ReliableStateUpdate);
+            			if (qos != QosType.Reliable && qos != QosType.ReliableFragmented && qos != QosType.ReliableSequenced)
+			{
+				return qos == QosType.ReliableStateUpdate;
+			}
+			return true;
         }
 
         /// <summary>
@@ -394,8 +402,7 @@ namespace UnityEngine.Networking
         {
             if (m_MessageHandlersDict.ContainsKey(netMsg.msgType))
             {
-                NetworkMessageDelegate msgDelegate = m_MessageHandlersDict[netMsg.msgType];
-                msgDelegate(netMsg);
+                m_MessageHandlersDict[netMsg.msgType](netMsg);
                 return true;
             }
             return false;
@@ -564,7 +571,11 @@ namespace UnityEngine.Networking
             {
                 LogSend(bytes);
             }
-            return CheckChannel(channelId) && m_Channels[channelId].SendBytes(bytes, numBytes);
+            if(CheckChannel(channelId))
+            {
+                return m_Channels[channelId].SendBytes(bytes, numBytes);
+            }
+            return false;
         }
 
         /// <summary>
@@ -596,7 +607,11 @@ namespace UnityEngine.Networking
             {
                 LogSend(writer.ToArray());
             }
-            return CheckChannel(channelId) && m_Channels[channelId].SendWriter(writer);
+            if(CheckChannel(channelId))
+            {
+                return m_Channels[channelId].SendWriter(writer);
+            }
+            return false;
         }
 
         void LogSend(byte[] bytes)

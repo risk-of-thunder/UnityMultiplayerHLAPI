@@ -196,7 +196,7 @@ namespace UnityEngine.Networking
         }
 
         internal NetBuffer fragmentBuffer = new NetBuffer();
-        bool readingFragment = false;
+        bool readingFragment;
 
         internal bool HandleFragment(NetworkReader reader)
         {
