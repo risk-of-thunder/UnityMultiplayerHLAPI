@@ -983,7 +983,6 @@ namespace UnityEngine.Networking
                 NetworkConnection conn = netMsg.conn;
                 short msgType = netMsg.msgType;
                 Debug.LogWarningFormat(string.Concat("Did not find target for sync message for ", netId, "(channelId = {0}, conn = {1}, msgType = {2}"), channelID, conn, msgType);
-                    ))
             }
         }
 

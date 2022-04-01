@@ -277,7 +277,7 @@ namespace UnityEngine.Networking
     /// </summary>
     /// <typeparam name="T"></typeparam>
     
-    public class SyncListStruct<T> : SyncList<T> where T : struct
+    public class SyncListStruct<T> : SyncList<T> where T : struct, IEquatable<T>
     {
         new public void AddInternal(T item)
         {
@@ -329,7 +329,7 @@ namespace UnityEngine.Networking
     /// <typeparam name="T"></typeparam>
     [EditorBrowsable(EditorBrowsableState.Never)]
     
-    abstract public class SyncList<T> : IList<T>
+    abstract public class SyncList<T> : IList<T> where T : IEquatable<T>
     {
         /// <summary>
         /// A delegate that can be populated to recieve callbacks when the list changes.

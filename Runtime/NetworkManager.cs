@@ -58,6 +58,36 @@ namespace UnityEngine.Networking
     
     public class NetworkManager : MonoBehaviour
     {
+        protected interface IChangeSceneAsyncOperation
+        {
+            bool isDone { get; }
+            bool allowSceneActivation { get; set; }
+        }
+
+        protected class DefaultChangeSceneAsyncOperation : IChangeSceneAsyncOperation
+        {
+            private AsyncOperation srcOperation;
+
+            public bool isDone => srcOperation.isDone;
+
+            public bool allowSceneActivation
+            {
+                get
+                {
+                    return srcOperation.allowSceneActivation;
+                }
+                set
+                {
+                    srcOperation.allowSceneActivation = value;
+                }
+            }
+
+            public DefaultChangeSceneAsyncOperation(AsyncOperation srcOperation)
+            {
+                this.srcOperation = srcOperation;
+            }
+        }
+
         // configuration
         [SerializeField] int m_NetworkPort = 7777;
         [SerializeField] bool m_ServerBindToIP;
@@ -420,7 +450,7 @@ namespace UnityEngine.Networking
         static RemovePlayerMessage s_RemovePlayerMessage = new RemovePlayerMessage();
         static ErrorMessage s_ErrorMessage = new ErrorMessage();
 
-        static AsyncOperation s_LoadingSceneAsync;
+        private static IChangeSceneAsyncOperation s_LoadingSceneAsync;
         static NetworkConnection s_ClientReadyConnection;
 
         // this is used to persist network address between scenes.
@@ -989,6 +1019,16 @@ namespace UnityEngine.Networking
             CleanupNetworkIdentities();
         }
 
+        protected virtual IChangeSceneAsyncOperation ChangeSceneImplementation(string newSceneName)
+        {
+            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(newSceneName);
+            if(asyncOperation == null)
+            {
+                return null;
+            }
+            return new DefaultChangeSceneAsyncOperation(asyncOperation);
+        }
+
         /// <summary>
         /// This causes the server to switch scenes and sets the networkSceneName.
         /// <para>Clients that connect to this server will automatically switch to this scene. This is called autmatically if onlineScene or offlineScene are set, but it can be called from user code to switch scenes again while the game is in progress. This automatically sets clients to be not-ready. The clients must call NetworkClient.Ready() again to participate in the new scene.</para>
@@ -1006,7 +1046,7 @@ namespace UnityEngine.Networking
             NetworkServer.SetAllClientsNotReady();
             networkSceneName = newSceneName;
 
-            s_LoadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
+            s_LoadingSceneAsync = ChangeSceneImplementation(newSceneName);
 
             StringMessage msg = new StringMessage(networkSceneName);
             NetworkServer.SendToAll(MsgType.Scene, msg);
@@ -1023,7 +1063,7 @@ namespace UnityEngine.Networking
             }
         }
 
-        internal void ClientChangeScene(string newSceneName, bool forceReload)
+        protected virtual void ClientChangeScene(string newSceneName, bool forceReload)
         {
             if (string.IsNullOrEmpty(newSceneName))
             {
@@ -1050,7 +1090,7 @@ namespace UnityEngine.Networking
                 }
             }
 
-            s_LoadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
+            s_LoadingSceneAsync = ChangeSceneImplementation(newSceneName);
             networkSceneName = newSceneName;
         }
 

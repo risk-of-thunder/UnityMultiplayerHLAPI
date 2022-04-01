@@ -34,7 +34,11 @@ namespace UnityEngine.Networking
 
         public override bool Equals(object obj)
         {
-            return obj is NetworkInstanceId && Equals((NetworkInstanceId)obj);
+            if(obj is NetworkInstanceId)
+            {
+                return Equals((NetworkInstanceId)obj);
+            }
+            return false;
         }
 
         public bool Equals(NetworkInstanceId other)

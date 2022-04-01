@@ -35,7 +35,7 @@ namespace UnityEngine.Networking
     /// <para>* If the dirty mask is non-zero value, then the OnDeserialize function reads the values for the SyncVars that correspond to the dirty bits that are set</para>
     /// <para>* If there are SyncVar hook functions, those are invoked with the value read from the stream.</para>
     /// </summary>
-    [ExecuteInEditMode]
+    [ExecuteAlways]
     [DisallowMultipleComponent]
     [AddComponentMenu("Network/NetworkIdentity")]
     
@@ -66,7 +66,7 @@ namespace UnityEngine.Networking
 
         // member used to mark a identity for future reset
         // check MarkForReset for more information.
-        bool                        m_Reset = false;
+        bool                        m_Reset;
         // properties
         /// <summary>
         /// Returns true if running as a client and this object was spawned by a server.
@@ -80,8 +80,11 @@ namespace UnityEngine.Networking
         {
             get
             {
-                // if server has stopped, should not still return true here
-                return m_IsServer && NetworkServer.active;
+                if(m_IsServer)
+                {
+                    return NetworkServer.active;
+                }
+                return false;
             }
         }
 
@@ -153,7 +156,9 @@ namespace UnityEngine.Networking
 #if UNITY_EDITOR
                 // This is important because sometimes OnValidate does not run (like when adding view to prefab with no child links)
                 if (!m_AssetId.IsValid())
+                {
                     SetupIDs();
+                }
 #endif
                 return m_AssetId;
             }
@@ -289,12 +294,18 @@ namespace UnityEngine.Networking
         /// <param name="uv">The object whose client authority status is being changed.</param>
         /// <param name="authorityState">The new state of client authority of the object for the connection.</param>
         public delegate void ClientAuthorityCallback(NetworkConnection conn, NetworkIdentity uv, bool authorityState);
+
+        public delegate void OnNetworkIdAssignedCallback(NetworkIdentity networkIdentity);
+
+        public delegate void OnStartServerGlobalDelegate(NetworkIdentity networkIdentity);
         /// <summary>
         /// A callback that can be populated to be notified when the client-authority state of objects changes.
         /// <para>Whenever an object is spawned using SpawnWithClientAuthority, or the client authority status of an object is changed with AssignClientAuthority or RemoveClientAuthority, then this callback will be invoked.</para>
         /// <para>This callback is used by the NetworkMigrationManager to distribute client authority state to peers for host migration. If the NetworkMigrationManager is not being used, this callback does not need to be populated.</para>
         /// </summary>
         public static ClientAuthorityCallback clientAuthorityCallback;
+        public static OnNetworkIdAssignedCallback onNetworkIdAssigned;
+        public static event OnStartServerGlobalDelegate onStartServerGlobal;
 
         static internal void AddNetworkId(uint id)
         {
@@ -312,6 +323,7 @@ namespace UnityEngine.Networking
             {
                 m_IsServer = false;
             }
+            onNetworkIdAssigned?.Invoke(this);
         }
 
         /// <summary>
@@ -446,6 +458,7 @@ namespace UnityEngine.Networking
             if (netId.IsEmpty())
             {
                 m_NetId = GetNextNetworkId();
+                onNetworkIdAssigned?.Invoke(this);
             }
             else
             {
@@ -584,8 +597,7 @@ namespace UnityEngine.Networking
         {
             for (int i = 0; i < m_NetworkBehaviours.Length; i++)
             {
-                NetworkBehaviour comp = m_NetworkBehaviours[i];
-                comp.OnSerialize(writer, true);
+                m_NetworkBehaviours[i].OnSerialize(writer, initialState: true);
             }
         }
 
@@ -782,8 +794,7 @@ namespace UnityEngine.Networking
             uint dirtyChannelBits = 0;
             for (int i = 0; i < m_NetworkBehaviours.Length; i++)
             {
-                NetworkBehaviour comp = m_NetworkBehaviours[i];
-                int channelId = comp.GetDirtyChannel();
+                int channelId = m_NetworkBehaviours[i].GetDirtyChannel();
                 if (channelId != -1)
                 {
                     dirtyChannelBits |= (uint)(1 << channelId);
