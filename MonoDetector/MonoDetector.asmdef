@@ -1,5 +1,6 @@
 {
     "name": "MonoDetector",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [
         "Editor"
@@ -9,7 +10,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "!BBEPIS_BEPINEXPACK"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }

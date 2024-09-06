@@ -1,6 +1,16 @@
 {
     "name": "com.unity.multiplayer-hlapi.Runtime",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [],
-    "excludePlatforms": []
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "BBEPIS_BEPINEXPACK"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
