@@ -14,8 +14,14 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "BBEPIS_BEPINEXPACK"
+        "HLAPI_BEPINEXPACK_INSTALLED"
     ],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "bbepis-bepinexpack",
+            "expression": "5.0.0",
+            "define": "HLAPI_BEPINEXPACK_INSTALLED"
+        }
+    ],
     "noEngineReferences": false
 }
