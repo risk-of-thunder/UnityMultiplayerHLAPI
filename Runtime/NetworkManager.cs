@@ -198,6 +198,7 @@ namespace UnityEngine.Networking
         /// A flag to control whether or not player objects are automatically created on connect, and on scene change.
         /// </summary>
         public bool autoCreatePlayer { get { return m_AutoCreatePlayer; } set { m_AutoCreatePlayer = value; } }
+        public static bool IsSceneLoadingAsynchronously => s_LoadingSceneAsync != null;
         /// <summary>
         /// The current method of spawning players used by the NetworkManager.
         /// <code>
